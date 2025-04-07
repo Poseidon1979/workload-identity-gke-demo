@@ -1,0 +1,42 @@
+template:
+  name: gke_template
+  identifier: gke_template
+  versionLabel: "1"
+  type: Pipeline
+  orgIdentifier: default
+  tags: {}
+  spec:
+    properties:
+      ci:
+        codebase:
+          connectorRef: org.for_template
+          build: <+input>
+    stages:
+      - stage:
+          name: build
+          identifier: build
+          description: ""
+          type: CI
+          spec:
+            cloneCodebase: true
+            caching:
+              enabled: true
+            infrastructure:
+              type: KubernetesDirect
+              spec:
+                connectorRef: org.GKE_local
+                namespace: petclinic
+                automountServiceAccountToken: true
+                nodeSelector: {}
+                os: Linux
+            execution:
+              steps:
+                - step:
+                    type: Run
+                    name: Run_1
+                    identifier: Run_1
+                    spec:
+                      connectorRef: account.harnessImage
+                      image: maven:latest
+                      shell: Sh
+                      command: echo "hello world"
